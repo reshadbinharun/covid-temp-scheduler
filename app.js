@@ -9,6 +9,7 @@ var test = require('./cronHelpers').test;
 
 var twilioRouter = require('./routes/twilio');
 var indexRouter = require('./routes/index');
+var mongoRouter = require('./routes/mongo');
 require('dotenv').config();
 
 var app = express();
@@ -18,10 +19,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
-
-const MongoClient = require('mongodb').MongoClient;
-const uri = `mongodb://${process.env.DBUSER}:${process.env.DBPASSWORD}@${process.env.DBHOST}/${process.env.DB}`;
-const client = new MongoClient(uri);
 
 let corsRegexString = process.env.CORS_REGEX || 'localhost';
 
@@ -40,10 +37,8 @@ app.use(cors(corsOptions));
 
 async function main() {
   try {
-    await client.connect();
-    const db = client.db(process.env.DB);
     
-    // TODO: use cron if needed
+    //TODO: use cron if needed
     const cronSchedule = '* * * * * *'
     if (process.env.ACTIVATE_CRON) {
       cron.schedule(cronSchedule, () => {
@@ -57,6 +52,8 @@ async function main() {
       req.db = db;
       next();
     }, twilioRouter);
+
+    app.use('/mongo/', mongoRouter);
 
     // catch 404 and forward to error handler
     app.use(function(req, res, next) {
