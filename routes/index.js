@@ -24,6 +24,7 @@ router.post('/ingest/csvFile', upload.single('file'), (req, res, next) => {
       console.log(`Parsed ${rowCount} rows`);
       // delete temporary file stored in tmp/csv
       fs.unlinkSync(filePath);
+      // TODO: dump record in database
       res.send({data: results});
     });
 });
