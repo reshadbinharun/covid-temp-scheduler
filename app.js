@@ -4,8 +4,12 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 const cors = require('cors');
-const cron = require("node-cron");
-var test = require('./cronHelpers').test;
+var CronJob = require('cron').CronJob;
+var { checkIn } = require('./cronHelpers');
+
+const MongoClient = require('mongodb').MongoClient;
+const uri = process.env.DBSTRING;
+const dbClient = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 var twilioRouter = require('./routes/twilio');
 var indexRouter = require('./routes/index');
@@ -22,6 +26,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 let corsRegexString = process.env.CORS_REGEX || 'localhost';
 
+// CRON EXPRESSIONS
+const cron9am = '0 0 9 * * *'
+const cron6pm = '0 0 18 * * *'
+
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', corsRegexString)
   next();
@@ -37,23 +45,38 @@ app.use(cors(corsOptions));
 
 async function main() {
   try {
-    
-    //TODO: use cron if needed
-    const cronSchedule = '* * * * * *'
+    await dbClient.connect();
+
     if (process.env.ACTIVATE_CRON) {
-      cron.schedule(cronSchedule, () => {
-        test('Print this');
-      });
+      var job9am = new CronJob(cron9am, () => {
+        checkIn(dbClient);
+      }, null, true, 'America/New_York');
+
+      var job6pm = new CronJob(cron6pm, () => {
+        checkIn(dbClient);
+      }, null, true, 'America/New_York');
+
+      job9am.start();
+      job6pm.start();
     }
 
-    app.use('/', indexRouter);
+    app.use('/', (req, res, next) => {
+      req.client = dbClient;
+      next();
+    },
+    indexRouter);
+
+    app.use('/twilio/', twilioRouter);
+    app.use('/mongo/', (req, res, next) => {
+      req.client = dbClient;
+      next();
+    },
+    mongoRouter);
 
     app.use('/twilio/', (req, res, next) => {
-      req.db = db;
+      req.client = dbClient;
       next();
     }, twilioRouter);
-
-    app.use('/mongo/', mongoRouter);
 
     // catch 404 and forward to error handler
     app.use(function(req, res, next) {
