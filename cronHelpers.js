@@ -1,5 +1,4 @@
 require('dotenv').config();
-
 const accountSid = process.env.TWILIO_AC;
 const authToken = process.env.TWILIO_AUTH;
 const twilioClient = require('twilio')(accountSid, authToken);
@@ -15,7 +14,7 @@ User collection anticipated shape
 - hasThermometer: string
 */
 async function getUsers(dbClient) {
-    const users = await dbClient.db("testdata").collection("User").find({hasThermometer: true}, {phone: true}).toArray();
+    const users = await dbClient.db("testdata").collection("User").find({}, {phone: true}).toArray();
     return users;
 }
 
@@ -44,9 +43,9 @@ App should have mongo router attached
 */
 const checkIn = async (dbClient) => {
     try {
-        const userPhones = await getUsers(dbClient);
-        await Promise.all(userPhones.map(async (phone) => {
-            await sendTemperatureCheckin(twilioClient, phone);
+        const users = await getUsers(dbClient);
+        await Promise.all(users.map(async (user) => {
+            await sendTemperatureCheckin(twilioClient, user.phone);
         }));
     } catch (e) {
         console.error(e);
