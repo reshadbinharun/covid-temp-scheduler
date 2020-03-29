@@ -19,4 +19,16 @@ router.get('/start', async (req, res) => {
     res.send('Successfully started process with no errors')
 });
 
+router.get('/firstCall', async (req, res) => {
+    try {
+        const flow = process.env.TWILIO_FIRST_CALL_FLOW
+        client.studio.v1.flows(flow).executions.create({ to: process.env.TWILIO_TO, from: process.env.TWILIO_FROM, MachineDetection: "Enable" }).then(function(execution) { console.log("Successfully executed flow!", execution.sid); });
+    } catch (e) {
+        res.json({
+            message: e
+        });
+    }
+    res.send("Successful call to twilio API")
+});
+
 module.exports = router;
