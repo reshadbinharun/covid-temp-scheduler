@@ -72,10 +72,7 @@ async function main() {
     },
     mongoRouter);
 
-    app.use('/twilio/', (req, res, next) => {
-      req.client = dbClient;
-      next();
-    }, twilioRouter);
+    app.use('/twilio/', twilioRouter);
 
     // catch 404 and forward to error handler
     app.use(function(req, res, next) {

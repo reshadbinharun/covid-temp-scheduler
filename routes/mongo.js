@@ -54,10 +54,47 @@ router.post('/updateTemp', async (req, res) => {
     res.send('Updated user record.');
 });
 
+/*
+Exposed to Twilio
+- TWILIO post request webhook must have hasThermo and phone defined as form-url-encoded http params
+*/
+router.post('/firstCallAnswered', async (req, res, next) => {
+    client = req.client;
+    const phone = req.body.phone
+    const hasThermo = req.body.hasThermo
+    try {
+        await insertSingleUser(client, "testdata", "User",
+        {
+                "phone": phone,
+                "hasThermo": hasThermo
+            }
+        );
+    } catch (e) {
+        next(e)
+    }
+    res.send('User Answered Call')
+});
+
+router.post('/firstCallNoAnswer', async (req, res, next) => {
+    client = req.client;
+    const phone = req.body.phone
+    try {
+        await insertSingleUser(client, "testdata", "noResponse",
+        {
+                "phone": phone
+            }
+        );
+    } catch (e) {
+        next(e)
+    }
+    res.send('User did not answer call')
+});
+
+// Mongo integration test function
 router.get('/inputOne', async (req, res, next) => {
     client = req.client;
     try {
-        await insertSingleUser(client,
+        await insertSingleUser(client, "testdata", "test_nums",
             {
                 "phone_num": "1111111111",
                 "name": "Test_one"
@@ -70,9 +107,9 @@ router.get('/inputOne', async (req, res, next) => {
 });
 
 //Hardcoded Demo Function: Inserts one user into the Mongo Database
-async function insertSingleUser(client, post) {
+async function insertSingleUser(client, database, collection, post) {
     try{
-        const result = await client.db("testdata").collection("test_nums").insertOne(post);
+        const result = await client.db(database).collection(collection).insertOne(post);
         console.log(result.insertedIds);
     } catch (e) {
         console.error(e)
