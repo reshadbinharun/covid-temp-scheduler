@@ -29,7 +29,7 @@ async function getUsers(dbClient) {
 }
 
 async function sendTemperatureCheckin(twilioClient, userPhone) {
-    const flow = process.env.TWILIO_FLOW;
+    const flow = process.env.TWILIO_CHECKIN_FLOW;
     const timeNow = moment().format('MMMM Do YYYY, h:mm:ss a');
     await twilioClient.studio.v1.flows(flow)
         .executions
