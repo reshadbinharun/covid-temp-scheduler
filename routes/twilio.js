@@ -20,15 +20,26 @@ router.get('/start', async (req, res) => {
 });
 
 router.get('/firstCall', async (req, res) => {
-    try {
-        const flow = process.env.TWILIO_FIRST_CALL_FLOW
-        client.studio.v1.flows(flow).executions.create({ to: process.env.TWILIO_TO, from: process.env.TWILIO_FROM, MachineDetection: "Enable" }).then(function(execution) { console.log("Successfully executed flow!", execution.sid); });
-    } catch (e) {
-        res.json({
-            message: e
-        });
-    }
+    dbclient = req.client;
+    const flow = process.env.TWILIO_FIRST_CALL_FLOW
+    const phoneNums = await readCollection(dbclient, "testdata", "test_nums")
+    phoneNums.forEach((number) => {
+        try {
+            client.studio.v1.flows(flow).executions.create({ to: number.phone, from: process.env.TWILIO_FROM, MachineDetection: "Enable" }).then(function(execution) { console.log("Successfully executed flow!", execution.sid); });
+        } catch (e) {
+            res.json({
+                message: e
+            });
+        }
+    });
     res.send("Successful call to twilio API")
 });
+
+async function readCollection(dbclient, database, collection) {
+    const cursor = await dbclient.db(database).collection(collection)
+        .find({})
+    const results = await cursor.toArray();
+    return results;
+}
 
 module.exports = router;
