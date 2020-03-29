@@ -15,7 +15,17 @@ User collection anticipated shape
 */
 async function getUsers(dbClient) {
     const users = await dbClient.db("testdata").collection("User").find({}, {phone: true}).toArray();
-    return users;
+    let uniqueUsers = [];
+    let phoneToCount = {};
+    users.forEach(user => {
+        if (!phoneToCount[user.phone]) {
+            phoneToCount[user.phone] = 1;
+            uniqueUsers.push(user);
+        } else {
+            phoneToCount[user.phone]++;
+        }
+    });
+    return uniqueUsers;
 }
 
 async function sendTemperatureCheckin(twilioClient, userPhone) {
