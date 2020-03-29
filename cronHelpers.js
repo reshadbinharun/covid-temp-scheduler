@@ -15,11 +15,21 @@ User collection anticipated shape
 */
 async function getUsers(dbClient) {
     const users = await dbClient.db("testdata").collection("User").find({}, {phone: true}).toArray();
-    return users;
+    let uniqueUsers = [];
+    let phoneToCount = {};
+    users.forEach(user => {
+        if (!phoneToCount[user.phone]) {
+            phoneToCount[user.phone] = 1;
+            uniqueUsers.push(user);
+        } else {
+            phoneToCount[user.phone]++;
+        }
+    });
+    return uniqueUsers;
 }
 
 async function sendTemperatureCheckin(twilioClient, userPhone) {
-    const flow = process.env.TWILIO_FLOW;
+    const flow = process.env.TWILIO_CHECKIN_FLOW;
     const timeNow = moment().format('MMMM Do YYYY, h:mm:ss a');
     await twilioClient.studio.v1.flows(flow)
         .executions

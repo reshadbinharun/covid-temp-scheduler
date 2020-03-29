@@ -27,8 +27,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 let corsRegexString = process.env.CORS_REGEX || 'localhost';
 
 // CRON EXPRESSIONS
-const cron9am = '0 0 9 * * *'
-const cron6pm = '0 0 18 * * *'
+const cron9am = process.env.MORNING_CRON || '0 0 9 * * *'
+const cron6pm = process.env.EVENING_CRON || '0 0 18 * * *'
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', corsRegexString)
