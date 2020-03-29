@@ -48,12 +48,12 @@ async function main() {
     await dbClient.connect();
 
     if (process.env.ACTIVATE_CRON) {
-      var job9am = new CronJob(cron9am, () => {
-        checkIn(dbClient);
+      var job9am = new CronJob(cron9am, async () => {
+        await checkIn(dbClient);
       }, null, true, 'America/New_York');
 
-      var job6pm = new CronJob(cron6pm, () => {
-        checkIn(dbClient);
+      var job6pm = new CronJob(cron6pm, async () => {
+        await checkIn(dbClient);
       }, null, true, 'America/New_York');
 
       job9am.start();
@@ -66,7 +66,6 @@ async function main() {
     },
     indexRouter);
 
-    app.use('/twilio/', twilioRouter);
     app.use('/mongo/', (req, res, next) => {
       req.client = dbClient;
       next();
