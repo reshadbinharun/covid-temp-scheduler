@@ -11,7 +11,7 @@ router.get('/', function(req, res, next) {
   res.send("This is the index page!");
 });
 
-router.post('/ingest/csvFile', upload.single('file'), (req, res, next) => {
+router.post('/ingest/csvFile', upload.single('file'), async (req, res, next) => {
     const filePath = req.file.path;
     let results = [];
     fs.createReadStream(filePath)
@@ -20,11 +20,11 @@ router.post('/ingest/csvFile', upload.single('file'), (req, res, next) => {
     .on('data', row => {
       results.push(row)
     })
-    .on('end', rowCount => {
+    .on('end', async rowCount => {
       console.log(`Parsed ${rowCount} rows`);
       // delete temporary file stored in tmp/csv
       fs.unlinkSync(filePath);
-      // TODO: dump record in database
+      await req.client.db("testdata").collection("User").insertMany(results);
       res.send({data: results});
     });
 });
