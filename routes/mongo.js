@@ -58,7 +58,7 @@ router.post('/updateTemp', async (req, res) => {
 Exposed to Twilio
 - TWILIO post request webhook must have hasThermo and phone defined as form-url-encoded http params
 */
-router.post('/firstCallAnswered', async (req, res, next) => {
+router.post('/firstCallNoThermo', async (req, res, next) => {
     client = req.client;
     const phone = req.body.phone
     const hasThermo = req.body.hasThermo
@@ -67,6 +67,25 @@ router.post('/firstCallAnswered', async (req, res, next) => {
         {
                 "phone": phone,
                 "hasThermo": hasThermo
+            }
+        );
+    } catch (e) {
+        next(e)
+    }
+    res.send('User Answered Call')
+});
+
+router.post('/firstCallAnswered', async (req, res, next) => {
+    client = req.client;
+    const phone = req.body.phone
+    const hasThermo = req.body.hasThermo
+    const reminders = req.body.reminders
+    try {
+        await insertSingleUser(client, "testdata", "User",
+        {
+                "phone": phone,
+                "hasThermo": hasThermo,
+                "reminders": reminders
             }
         );
     } catch (e) {
