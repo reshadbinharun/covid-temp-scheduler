@@ -8,7 +8,7 @@ router.get('/users', async (req, res, next) => {
     client = req.client;
     let users = []
     try {
-        users = await client.db("testdata").collection("User").find().toArray();
+        users = await client.db(process.env.DB).collection("User").find().toArray();
     } catch (e) {
         next(e);
     }
@@ -47,7 +47,7 @@ router.post('/updateTemp', async (req, res) => {
             time,
             temp
         }
-        await client.db("testdata").collection("User").updateOne({phone}, {$push: {temperatureRecords: tempRecord}})
+        await client.db(process.env.DB).collection("User").updateOne({phone}, {$push: {temperatureRecords: tempRecord}})
     } catch (e) {
         next(e);
     }
@@ -67,7 +67,7 @@ router.post('/firstCallNoThermo', async (req, res, next) => {
         hasThermo = true;
     }
     try {
-        await insertSingleUser(client, "testdata", "User",
+        await insertSingleUser(client, process.env.DB, "User",
         {
                 "phone": phone,
                 "hasThermo": hasThermo
@@ -93,7 +93,7 @@ router.post('/firstCallAnswered', async (req, res, next) => {
         prefersCall = true;
     }
     try {
-        await insertSingleUser(client, "testdata", "User",
+        await insertSingleUser(client, process.env.DB, "User",
         {
                 "phone": phone,
                 "hasThermo": hasThermo,
@@ -110,7 +110,7 @@ router.post('/firstCallNoAnswer', async (req, res, next) => {
     client = req.client;
     const phone = req.body.phone
     try {
-        await insertSingleUser(client, "testdata", "noResponse",
+        await insertSingleUser(client, process.env.DB, "noResponse",
         {
                 "phone": phone
             }
@@ -125,7 +125,7 @@ router.post('/firstCallNoAnswer', async (req, res, next) => {
 router.get('/inputOne', async (req, res, next) => {
     client = req.client;
     try {
-        await insertSingleUser(client, "testdata", "test_nums",
+        await insertSingleUser(client, process.env.DB, "test_nums",
             {
                 "phone_num": "1111111111",
                 "name": "Test_one"
