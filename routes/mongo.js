@@ -78,14 +78,22 @@ router.post('/firstCallNoThermo', async (req, res, next) => {
 router.post('/firstCallAnswered', async (req, res, next) => {
     client = req.client;
     const phone = req.body.phone
-    const hasThermo = req.body.hasThermo
+    const thermoString = req.body.hasThermo
+    var hasThermo = false;
+    if (thermoString === "true") {
+        hasThermo = true;
+    }
     const reminders = req.body.reminders
+    var prefersCall = false;
+    if (reminders === "call") {
+        prefersCall = true;
+    }
     try {
         await insertSingleUser(client, "testdata", "User",
         {
                 "phone": phone,
                 "hasThermo": hasThermo,
-                "reminders": reminders
+                "reminders": prefersCall
             }
         );
     } catch (e) {
