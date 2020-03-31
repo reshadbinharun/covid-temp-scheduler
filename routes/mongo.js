@@ -61,7 +61,11 @@ Exposed to Twilio
 router.post('/firstCallNoThermo', async (req, res, next) => {
     client = req.client;
     const phone = req.body.phone
-    const hasThermo = req.body.hasThermo
+    const thermoString = req.body.hasThermo
+    var hasThermo = false;
+    if (thermoString === "true") {
+        hasThermo = true;
+    }
     try {
         await insertSingleUser(client, "testdata", "User",
         {
