@@ -49,11 +49,11 @@ async function main() {
 
     if (process.env.ACTIVATE_CRON) {
       var job9am = new CronJob(cron9am, async () => {
-        await checkIn(dbClient);
+        await checkIn(dbClient, '6pm tonight', 'morning');
       }, null, true, 'America/New_York');
 
       var job6pm = new CronJob(cron6pm, async () => {
-        await checkIn(dbClient);
+        await checkIn(dbClient, '9am tomorrow morning', 'evening');
       }, null, true, 'America/New_York');
 
       job9am.start();

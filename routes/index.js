@@ -24,7 +24,7 @@ router.post('/ingest/csvFile', upload.single('file'), async (req, res, next) => 
       console.log(`Parsed ${rowCount} rows`);
       // delete temporary file stored in tmp/csv
       fs.unlinkSync(filePath);
-      await req.client.db("testdata").collection("User").insertMany(results);
+      await req.client.db(process.env.DB).collection("User").insertMany(results);
       res.send({data: results});
     });
 });
