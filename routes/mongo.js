@@ -106,11 +106,28 @@ router.post('/firstCallAnswered', async (req, res, next) => {
     res.send('User Answered Call')
 });
 
+// The next 2 methods are exposed to Twilio FirstCall flow, for people that
+// need to be contacted by humans
 router.post('/firstCallNoAnswer', async (req, res, next) => {
     client = req.client;
     const phone = req.body.phone
     try {
         await insertSingleUser(client, process.env.DB, "noResponse",
+        {
+                "phone": phone
+            }
+        );
+    } catch (e) {
+        next(e)
+    }
+    res.send('User did not answer call')
+});
+
+router.post('/moreInfo', async (req, res, next) => {
+    client = req.client;
+    const phone = req.body.phone
+    try {
+        await insertSingleUser(client, process.env.DB, "moreInfo",
         {
                 "phone": phone
             }
