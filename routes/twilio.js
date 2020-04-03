@@ -5,6 +5,7 @@ const accountSid = process.env.TWILIO_AC;
 const authToken = process.env.TWILIO_AUTH;
 const client = require('twilio')(accountSid, authToken);
 const moment = require('moment');
+var { checkIn } = require('../cronHelpers');
 
 router.get('/start', async (req, res) => {
     try {
@@ -33,6 +34,26 @@ router.get('/firstCall', async (req, res) => {
         }
     });
     res.send("Successful call to twilio API")
+});
+
+router.get('/checkIn/morning', async (req, res) => {
+    try {
+        dbclient = req.client;
+        await checkIn(dbclient, "6pm tonight", "morning");
+    } catch (e) {
+        next(e);
+    }
+    res.send("Successfully started morning checkIn twilio API");
+});
+
+router.get('/checkIn/evening', async (req, res) => {
+    try {
+        dbclient = req.client;
+        await checkIn(dbclient, "9am tomorrow morning", "evening");
+    } catch (e) {
+        next(e);
+    }
+    res.send("Successfully started morning checkIn twilio API");
 });
 
 async function readCollection(dbclient, database, collection) {

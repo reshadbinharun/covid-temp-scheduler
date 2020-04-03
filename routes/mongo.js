@@ -20,7 +20,7 @@ ENDPOINTS TO TEST TWILIO INTEGRATION
 v v v
 */
 router.get('/twilioTest', async (req, res, next) => {
-    await checkIn(req.client);
+    await checkIn(req.client, 'nextCheckin', 'period');
     res.send('Hit twilio endpoint');
 });
 
