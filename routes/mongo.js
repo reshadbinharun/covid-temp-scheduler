@@ -97,7 +97,7 @@ router.post('/firstCallAnswered', async (req, res, next) => {
         {
                 "phone": phone,
                 "hasThermo": hasThermo,
-                "reminders": prefersCall
+                "prefersCall": prefersCall
             }
         );
     } catch (e) {
