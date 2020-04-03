@@ -53,7 +53,7 @@ router.get('/checkIn/evening', async (req, res) => {
     } catch (e) {
         next(e);
     }
-    res.send("Successfully started morning checkIn twilio API");
+    res.send("Successfully started evening checkIn twilio API");
 });
 
 async function readCollection(dbclient, database, collection) {
