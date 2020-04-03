@@ -24,16 +24,16 @@ router.get('/firstCall', async (req, res) => {
     dbclient = req.client;
     const flow = process.env.TWILIO_FIRST_CALL_FLOW
     const phoneNums = await readCollection(dbclient, process.env.DB, process.env.INGEST_COLLECTION)
-    phoneNums.forEach((number) => {
+    await Promise.all(phoneNums.map(async (numberRecord) => {
         try {
-            const phone = number.phone.replace(/\s/g, '');
+            const phone = numberRecord.phone.replace(/\s/g, '');
             client.studio.v1.flows(flow).executions.create({ to: phone, from: process.env.TWILIO_FROM, MachineDetection: "Enable" }).then(function(execution) { console.log("Successfully executed flow!", execution.sid); });
         } catch (e) {
             res.json({
                 message: e
             });
         }
-    });
+    }));
     res.send("Successful call to twilio API")
 });
 
