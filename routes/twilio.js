@@ -26,8 +26,8 @@ router.get('/firstCall', async (req, res) => {
     const phoneNums = await readCollection(dbclient, process.env.DB, process.env.INGEST_COLLECTION)
     phoneNums.forEach((number) => {
         try {
-            number = number.replace(/\s/g, '');
-            client.studio.v1.flows(flow).executions.create({ to: number.phone, from: process.env.TWILIO_FROM, MachineDetection: "Enable" }).then(function(execution) { console.log("Successfully executed flow!", execution.sid); });
+            const phone = number.phone.replace(/\s/g, '');
+            client.studio.v1.flows(flow).executions.create({ to: phone, from: process.env.TWILIO_FROM, MachineDetection: "Enable" }).then(function(execution) { console.log("Successfully executed flow!", execution.sid); });
         } catch (e) {
             res.json({
                 message: e
