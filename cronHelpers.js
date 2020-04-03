@@ -28,7 +28,7 @@ async function getUsers(dbClient) {
 }
 
 async function sendTemperatureCheckin(twilioClient, user, nextCheckIn, period) {
-    const flow = user.prefersCall ? process.env.TWILIO_CALL_CHECKIN_FLOW : process.env.TWILIO_TEXT_CHECKIN_FLOW;
+    const flow = user.prefersCall ? process.env.TWILIO_PHONE_CHECKIN_FLOW : process.env.TWILIO_TEXT_CHECKIN_FLOW;
     console.log("flow id is ", flow, " - user is ", user, " - ");
     await twilioClient.studio.v1.flows(flow)
         .executions
