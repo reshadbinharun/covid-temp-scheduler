@@ -23,7 +23,7 @@ router.get('/start', async (req, res) => {
 router.get('/firstCall', async (req, res) => {
     dbclient = req.client;
     const flow = process.env.TWILIO_FIRST_CALL_FLOW
-    const phoneNums = await readCollection(dbclient, process.env.DB, "test_nums")
+    const phoneNums = await readCollection(dbclient, process.env.DB, process.env.INGEST_COLLECTION)
     phoneNums.forEach((number) => {
         try {
             client.studio.v1.flows(flow).executions.create({ to: number.phone, from: process.env.TWILIO_FROM, MachineDetection: "Enable" }).then(function(execution) { console.log("Successfully executed flow!", execution.sid); });

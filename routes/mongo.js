@@ -142,7 +142,7 @@ router.post('/moreInfo', async (req, res, next) => {
 router.get('/inputOne', async (req, res, next) => {
     client = req.client;
     try {
-        await insertSingleUser(client, process.env.DB, "test_nums",
+        await insertSingleUser(client, process.env.DB, process.env.INGEST_COLLECTION,
             {
                 "phone_num": "1111111111",
                 "name": "Test_one"
