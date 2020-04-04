@@ -40,6 +40,7 @@ router.post('/updateTemp', async (req, res) => {
     client = req.client;
     const phone = req.body.phone;
     const temp = req.body.temp;
+    console.log("phone and temp are", phone, temp);
     try {
         const time = moment().format('MMMM Do YYYY, h:mm:ss a');
         // create temperature record
