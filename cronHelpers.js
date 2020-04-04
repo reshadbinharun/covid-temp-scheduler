@@ -29,10 +29,10 @@ async function getUsers(dbClient) {
 
 async function sendTemperatureCheckin(twilioClient, user, nextCheckIn, period) {
     let flow = user.prefersCall ? process.env.TWILIO_PHONE_CHECKIN_FLOW : process.env.TWILIO_TEXT_CHECKIN_FLOW;
-    console.log("flow id is ", flow, " - user is ", user, " - ");
-    if (user.phone !== '+1784750694') {
-        flow = process.env.TWILIO_TEXT_CHECKIN_FLOW;
+    if (flow === process.env.TWILIO_TEXT_CHECKIN_FLOW) {
+        return;
     }
+    console.log("flow id is ", flow, " - user is ", user, " - ");
     await twilioClient.studio.v1.flows(flow)
         .executions
         .create(
