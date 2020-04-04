@@ -154,6 +154,19 @@ router.get('/inputOne', async (req, res, next) => {
     res.send('MongoDB Post Made')
 });
 
+router.post('/test/upsertUser', async (req, res, next) => {
+    try {
+        const phone = req.body.phone;
+        const hasThermo = req.body.hasThermo;
+        const prefersCall = req.body.prefersCall;
+        const client = req.client;
+        const result = await client.db(process.env.DB).collection(process.env.USER_COLLECTION).update({phone}, {phone, hasThermo, prefersCall}, { upsert: true});
+        res.send(result);
+    } catch (e) {
+        next(e);
+    }
+});
+
 //Hardcoded Demo Function: Inserts one user into the Mongo Database
 async function insertSingleUser(client, database, collection, post) {
     try{
