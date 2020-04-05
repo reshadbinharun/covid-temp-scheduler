@@ -2,7 +2,8 @@ App to ingest temperature data, and send scheduled checkins for temperature self
 
 APIs exposed:
 
-* POST: `/ingest/csvFile` {File: .csv} -> uploads user records from .csv data (should have phone header included)
+* POST: `/ingest/csvFile` {File: .csv} -> uploads user records from .csv data (should have phone header included). Key must be named "file" and set body type to be "form-data"
+
 
 * GET: `/mongo/users` -> returns all users currently in database
 * GET: `/mongo/twilioTest` -> kicks off the Twilio interaction for temperature check-in
