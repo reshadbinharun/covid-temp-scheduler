@@ -8,6 +8,11 @@ APIs exposed:
 * GET: `/mongo/twilioTest` -> kicks off the Twilio interaction for temperature check-in
 * POST: `/mongo/updateTemp` {phone: string, temp: string} -> adds a new temperatureRecord for user by provided phone number
 * POST: `mongo/test/upsertUser` {phone: string, hasThermo: boolean, prefersCall: boolean} -> adds or updates(by phone) a user record
+* POST: `mongo/firstCallNoThermo` -> {phone: string, hasThermo: bool} -> adds user to the Users collection with hasThermo set to false
+* POST: `mongo/firstCallAnswered` -> {phone: string, hasThermo: bool, prefersCall, bool} -> adds a user to the Users collection on the firstcall
+* POST: `mongo/firstCallNoAnswer` {phone: string} -> adds a user to the no answer collection if they do not answer the first call
+* POST: `mongo/moreInfo` {phone: string} -> adds a user to the moreInfo collection in the database if they request more information during the first call
+* GET: `mongo/inputOne` -> adds a predefined user to the testnums collection
 
 * GET: `/twilio/checkIn/morning` -> kicks off morning checkIn job for all users in database
 * GET: `/twilio/checkIn/evening` -> kicks off evening checkIn job for all users in database
