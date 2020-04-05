@@ -33,7 +33,7 @@ router.get('/firstCall', async (req, res) => {
         })
         await Promise.all(ingestedUsers.map(async (numberRecord) => {
             const phone = numberRecord.phone.replace(/\s/g, '');
-            client.studio.v1.flows(flow).executions.create({ to: phone, from: process.env.TWILIO_FROM, MachineDetection: "Enable" }).then(function(execution) { console.log("Successfully executed flow!", execution.sid); });
+            client.studio.v1.flows(flow).executions.create({ to: phone, from: process.env.TWILIO_FROM, MachineDetection: "Enable" }).then(function(execution) { console.log("Successfully executed flow: ", execution.sid, " for phone: ", phone); });
         }));
         res.send("Successfully executed first calls via twilio API")
     } catch (e) {
