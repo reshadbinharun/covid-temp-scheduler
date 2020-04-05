@@ -12,3 +12,4 @@ APIs exposed:
 * GET: `/twilio/checkIn/morning` -> kicks off morning checkIn job for all users in database
 * GET: `/twilio/checkIn/evening` -> kicks off evening checkIn job for all users in database
 * GET: `/twilio/test/tempCheck/:textOrPhone/:period/:phone` -> sends a text or call based (:textOrPhone should be "text" for text based), temperature check-in for the given  period (evening/morning) and phone number
+* GET: `/twilio/firstCall` -> makes firstCall to all users from the ingested collection
