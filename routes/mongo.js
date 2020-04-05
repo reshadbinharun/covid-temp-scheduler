@@ -4,6 +4,17 @@ var router = express.Router();
 const moment = require('moment');
 const { checkIn } = require('../cronHelpers');
 
+function sanitizeTemp(temp) {
+    let input = temp.toString().trim().replace(/[^0-9.]/g, "");
+    if (input.length < 3) {
+        return input;
+    }
+    if (!input.includes('.')) {
+        input.splice(2, 0, '.');
+    }
+    return input;
+}
+
 router.get('/users', async (req, res, next) => {
     client = req.client;
     let users = []
@@ -16,30 +27,13 @@ router.get('/users', async (req, res, next) => {
 });
 
 /*
-ENDPOINTS TO TEST TWILIO INTEGRATION
-v v v
-*/
-router.get('/twilioTest', async (req, res, next) => {
-    await checkIn(req.client, 'nextCheckin', 'period');
-    res.send('Hit twilio endpoint');
-});
-
-router.get('/noReply', async (req, res, next) => {
-    res.send('No reply');
-});
-/*
-^ ^ ^
-ENDPOINTS TO TEST TWILIO INTEGRATION
-*/
-
-/*
 Exposed to Twilio
 - TWILIO post request webhook must have temp, phone defined as form-url-encoded http parameters
 */
 router.post('/updateTemp', async (req, res) => {
     client = req.client;
     const phone = req.body.phone;
-    const temp = req.body.temp;
+    const temp = sanitizeTemp(req.body.temp);
     try {
         const time = moment().format('MMMM Do YYYY, h:mm:ss a');
         // create temperature record
@@ -48,10 +42,10 @@ router.post('/updateTemp', async (req, res) => {
             temp
         }
         await client.db(process.env.DB).collection("User").updateOne({phone}, {$push: {temperatureRecords: tempRecord}})
+        res.send('Updated user record.');
     } catch (e) {
         next(e);
     }
-    res.send('Updated user record.');
 });
 
 /*
@@ -132,10 +126,10 @@ router.post('/moreInfo', async (req, res, next) => {
                 "phone": phone
             }
         );
+        res.send('User did not answer call')
     } catch (e) {
         next(e)
     }
-    res.send('User did not answer call')
 });
 
 // Mongo integration test function
@@ -171,7 +165,6 @@ router.post('/test/upsertUser', async (req, res, next) => {
 async function insertSingleUser(client, database, collection, post) {
     try{
         const result = await client.db(database).collection(collection).insertOne(post);
-        console.log(result.insertedIds);
     } catch (e) {
         console.error(e)
     }
