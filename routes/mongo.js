@@ -10,6 +10,7 @@ router.get('/users', async (req, res, next) => {
     try {
         users = await client.db(process.env.DB).collection("User").find().toArray();
     } catch (e) {
+        console.error("Error -> mongo/test: ", e);
         next(e);
     }
     res.send(users)
@@ -36,7 +37,7 @@ ENDPOINTS TO TEST TWILIO INTEGRATION
 Exposed to Twilio
 - TWILIO post request webhook must have temp, phone defined as form-url-encoded http parameters
 */
-router.post('/updateTemp', async (req, res) => {
+router.post('/updateTemp', async (req, res, next) => {
     client = req.client;
     const phone = req.body.phone;
     const temp = req.body.temp;
@@ -47,11 +48,12 @@ router.post('/updateTemp', async (req, res) => {
             time,
             temp
         }
-        await client.db(process.env.DB).collection("User").updateOne({phone}, {$push: {temperatureRecords: tempRecord}})
+        await client.db(process.env.DB).collection(process.env.USER_COLLECTION).updateOne({phone}, {$push: {temperatureRecords: tempRecord}})
+        res.send('Updated user record.');
     } catch (e) {
+        console.error("Error -> mongo/updateTemp: ", e, " for ", phone);
         next(e);
     }
-    res.send('Updated user record.');
 });
 
 /*
@@ -74,6 +76,7 @@ router.post('/firstCallNoThermo', async (req, res, next) => {
             }
         );
     } catch (e) {
+        console.error("Error -> mongo/firstCallNoThermo: ", e, " for ", phone);
         next(e)
     }
     res.send('User Answered Call')
@@ -94,16 +97,17 @@ router.post('/firstCallAnswered', async (req, res, next) => {
     }
     try {
         await insertSingleUser(client, process.env.DB, "User",
-        {
+            {
                 "phone": phone,
                 "hasThermo": hasThermo,
                 "prefersCall": prefersCall
             }
         );
+        res.send('User Answered Call');
     } catch (e) {
-        next(e)
+        console.error("Error -> mongo/firstCallAnswered: ", e, " for ", phone);
+        next(e);
     }
-    res.send('User Answered Call')
 });
 
 // The next 2 methods are exposed to Twilio FirstCall flow, for people that
@@ -113,14 +117,15 @@ router.post('/firstCallNoAnswer', async (req, res, next) => {
     const phone = req.body.phone
     try {
         await insertSingleUser(client, process.env.DB, "noResponse",
-        {
+            {
                 "phone": phone
             }
         );
+        res.send('User did not answer call');
     } catch (e) {
-        next(e)
+        console.error("Error -> mongo/firstCallNoAnswer: ", e, " for ", phone);
+        next(e);
     }
-    res.send('User did not answer call')
 });
 
 router.post('/moreInfo', async (req, res, next) => {
@@ -128,14 +133,15 @@ router.post('/moreInfo', async (req, res, next) => {
     const phone = req.body.phone
     try {
         await insertSingleUser(client, process.env.DB, "moreInfo",
-        {
+            {
                 "phone": phone
             }
         );
+        res.send('Received more info');
     } catch (e) {
+        console.error("Error -> mongo/moreInfo: ", e, " for ", phone);
         next(e)
     }
-    res.send('User did not answer call')
 });
 
 // Mongo integration test function
@@ -146,12 +152,13 @@ router.get('/inputOne', async (req, res, next) => {
             {
                 "phone_num": "1111111111",
                 "name": "Test_one"
-              }
-            );
+            }
+        );
+        res.send('MongoDB Post Made')
     } catch (e) {
+        console.error("Error -> mongo/inputOne: ", e);
         next(e);
     }
-    res.send('MongoDB Post Made')
 });
 
 router.post('/test/upsertUser', async (req, res, next) => {
@@ -163,15 +170,15 @@ router.post('/test/upsertUser', async (req, res, next) => {
         const result = await client.db(process.env.DB).collection(process.env.USER_COLLECTION).update({phone}, {phone, hasThermo, prefersCall}, { upsert: true});
         res.send(result);
     } catch (e) {
+        console.error("Error -> mongo//test/upsertUser: ", e);
         next(e);
     }
 });
 
 //Hardcoded Demo Function: Inserts one user into the Mongo Database
 async function insertSingleUser(client, database, collection, post) {
-    try{
+    try {
         const result = await client.db(database).collection(collection).insertOne(post);
-        console.log(result.insertedIds);
     } catch (e) {
         console.error(e)
     }

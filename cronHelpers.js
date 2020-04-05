@@ -12,8 +12,8 @@ User collection anticipated shape
 - phone: string
 - hasThermometer: string
 */
-async function getUsers(dbClient) {
-    const users = await dbClient.db(process.env.DB).collection("User").find({}, {phone: true}).toArray();
+const getUniqueUsers = async (dbClient) => {
+    const users = await dbClient.db(process.env.DB).collection(process.env.USER_COLLECTION).find({}, {phone: true}).toArray();
     let uniqueUsers = [];
     let phoneToCount = {};
     users.forEach(user => {
@@ -51,14 +51,15 @@ App should have mongo router attached
 */
 const checkIn = async (dbClient, nextCheckIn, period) => {
     try {
-        const users = await getUsers(dbClient);
+        const users = await getUniqueUsers(dbClient);
         await Promise.all(users.map(async (user) => {
             await sendTemperatureCheckin(twilioClient, user, nextCheckIn, period);
         }));
     } catch (e) {
-        console.error(e);
+        console.error(`Error with ${period} temperature check in:`, e);
     }
 }
 
 exports.test = test
 exports.checkIn = checkIn 
+exports.getUniqueUsers = getUniqueUsers 
