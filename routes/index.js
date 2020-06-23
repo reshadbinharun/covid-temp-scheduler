@@ -29,4 +29,24 @@ router.post('/ingest/csvFile', upload.single('file'), async (req, res, next) => 
     });
 });
 
+router.get('/ingest', async (req, res, next) => {
+    try {
+      const ingestedUsers = await req.client.db(process.env.DB).collection(process.env.INGEST_COLLECTION).find().toArray();
+      res.send({ingestedUsers});
+    } catch (e) {
+      console.log("Error -> /ingest:", e);
+      next(e);
+    }
+});
+
+router.get('/ingest/clear', async (req, res, next) => {
+  try {
+    await req.client.db(process.env.DB).collection(process.env.INGEST_COLLECTION).remove({});
+    res.send("Deleted all records ingested.");
+  } catch (e) {
+    console.log("Error -> /ingest/clear:", e);
+    next(e);
+  }
+});
+
 module.exports = router;
