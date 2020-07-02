@@ -13,10 +13,19 @@ TODO:
 
 ## Usage Guide:
 1. Download POSTman (https://www.postman.com/)
+
 2. Use POSTman to send a POST request to SERVER_LINK/ingest/csvFile. Have the body contain one field, a file with key "file"
-The file needs to be a .csv file, with headers "ID" and "Phone Number" (match case)
+The file needs to be a .csv file, with headers "id" and "phone number" or similar. 
+Your CSV should look like this:
+![CSV](https://i.imgur.com/zi8kig2.png)
+
+and your POST request like this: 
+![POSTman ](https://i.imgur.com/Dn0hnGC.png)
+
 3. Hit send. This should display text starting with "data".
+
 4. Hit the `/twilio/firstCall` GET end-point 
+
 5. Use `/mongo/users` GET end-point to check what users have been registered onto the system. You may use this API to periodically track updates in temperatures
 
 
