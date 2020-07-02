@@ -15,10 +15,12 @@ router.post('/ingest/csvFile', upload.single('file'), async (req, res, next) => 
     const filePath = req.file.path;
     let results = [];
     fs.createReadStream(filePath)
-    .pipe(csv.parse({ headers: true }))
+    .pipe(csv.parse({ headers: ['id', 'phone'], renameHeaders: true}))
     .on('error', error => console.error(error))
     .on('data', row => {
-      results.push(row)
+      if(row.id !== '' && row.phone !== '') {
+        results.push(row)
+      }
     })
     .on('end', async rowCount => {
       console.log(`Parsed ${rowCount} rows`);
