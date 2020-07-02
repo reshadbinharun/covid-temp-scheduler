@@ -24,7 +24,7 @@ and your POST request like this:
 
 ![POSTman ](https://i.imgur.com/Dn0hnGC.png)
 
-3. Hit send. This should display text starting with "data".
+3. Hit send. This should display text starting with "data", which means the entries were successfully loaded into the database.
 
 4. Hit the `/twilio/firstCall` GET end-point 
 
