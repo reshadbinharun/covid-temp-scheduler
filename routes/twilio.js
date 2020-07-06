@@ -19,8 +19,8 @@ router.get('/firstCall', async (req, res) => {
                 .create({ to: phone, from: process.env.TWILIO_FROM, MachineDetection: "Enable" })
                 .then(function(execution) { 
                     console.log("Successfully executed flow!", execution.sid);
-                    let removeNum = await dbclient.db(process.env.DB).collection(process.env.INGEST_COLLECTION).remove({phone: phone})
                 });
+                let removeNum = await dbclient.db(process.env.DB).collection(process.env.INGEST_COLLECTION).remove({phone: phone})
             res.send("Successful call to twilio API")
         } catch (e) {
             res.json({
