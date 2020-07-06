@@ -19,7 +19,7 @@ router.post('/ingest/csvFile', upload.single('file'), async (req, res, next) => 
     .on('error', error => console.error(error))
     .on('data', row => {
       if(row.id !== '' && row.phone !== '') {
-        row.phone = row.phone.replace(/-/g, '')
+        row.phone = row.phone.replace(/[^\w\s]|_/g, "")
         results.push(row)
       }
     })
@@ -27,7 +27,12 @@ router.post('/ingest/csvFile', upload.single('file'), async (req, res, next) => 
       console.log(`Parsed ${rowCount} rows`);
       // delete temporary file stored in tmp/csv
       fs.unlinkSync(filePath);
-      await req.client.db(process.env.DB).collection(process.env.INGEST_COLLECTION).insertMany(results);
+      for (let user of results) {
+        let phone = user.phone
+        let id = user.id
+        const result = await req.client.db(process.env.DB).collection(process.env.INGEST_COLLECTION)
+                                       .update({phone}, {phone, id}, { upsert: true});
+      }
       res.send({data: results});
     });
 });
