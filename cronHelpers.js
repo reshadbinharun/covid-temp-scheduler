@@ -29,7 +29,7 @@ async function getUsers(dbClient) {
 
 async function sendTemperatureCheckin(twilioClient, user, nextCheckIn, period) {
     const flow = user.prefersCall ? process.env.TWILIO_PHONE_CHECKIN_FLOW : process.env.TWILIO_TEXT_CHECKIN_FLOW;
-    await twilioClient.studio.v1.flows(flow)
+    await twilioClient.studio.flows(flow)
         .executions
         .create(
             { 
