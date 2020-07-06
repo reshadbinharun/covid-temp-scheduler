@@ -7,18 +7,6 @@ const client = require('twilio')(accountSid, authToken);
 const moment = require('moment');
 var { checkIn } = require('../cronHelpers');
 
-router.get('/start', async (req, res) => {
-    try {
-        const flow = process.env.TWILIO_CHECKIN_FLOW;
-        const timeNow = moment().format('MMMM Do YYYY, h:mm:ss a');
-        client.studio.flows(flow).executions.create({ to: process.env.TWILIO_TO, from: process.env.TWILIO_FROM, parameters: JSON.stringify({time: timeNow})}).then(function(execution) { console.log("Successfully executed flow!", execution.sid); });
-        res.send('Successfully started process with no errors')
-    } catch (e) {
-        res.json({
-            message: e
-        });
-    }
-});
 
 router.get('/firstCall', async (req, res) => {
     dbclient = req.client;
@@ -27,8 +15,12 @@ router.get('/firstCall', async (req, res) => {
     await Promise.all(phoneNums.map(async (numberRecord) => {
         try {
             const phone = numberRecord.phone;
-            client.studio.flows(flow).executions.create({ to: phone, from: process.env.TWILIO_FROM, MachineDetection: "Enable" }).then(function(execution) { console.log("Successfully executed flow!", execution.sid); });
-            let removeNum = await dbclient.db(process.env.DB).collection(process.env.INGEST_COLLECTION).remove({phone: phone})
+            client.studio.flows(flow).executions
+                .create({ to: phone, from: process.env.TWILIO_FROM, MachineDetection: "Enable" })
+                .then(function(execution) { 
+                    console.log("Successfully executed flow!", execution.sid);
+                    let removeNum = await dbclient.db(process.env.DB).collection(process.env.INGEST_COLLECTION).remove({phone: phone})
+                });
             res.send("Successful call to twilio API")
         } catch (e) {
             res.json({
