@@ -53,9 +53,10 @@ router.post('/updateTemp', async (req, res) => {
         }
         await client.db(process.env.DB).collection("participant-data").insertOne(tempRecord)
     } catch (e) {
+        console.log(e)
         next(e);
     }
-    res.send('Updated user record.');
+    res.status(200).send('Updated user record.');
 });
 
 /*
