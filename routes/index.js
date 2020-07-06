@@ -19,7 +19,7 @@ router.post('/ingest/csvFile', upload.single('file'), async (req, res, next) => 
     .on('error', error => console.error(error))
     .on('data', row => {
       if(row.id !== '' && row.phone !== '') {
-        row.phone = row.phone.replace(/[^\w\s]|_/g, "")
+        row.phone = '+1' + row.phone.replace(/[^\d+]|_|(\+1)/g, "")
         results.push(row)
       }
     })
