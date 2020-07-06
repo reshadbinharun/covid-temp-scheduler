@@ -40,14 +40,18 @@ router.post('/updateTemp', async (req, res) => {
     client = req.client;
     const phone = req.body.phone;
     const temp = req.body.temp;
+    if (temp > 900) {
+        temp /= 10
+    }
     try {
         const time = moment().format('MMMM Do YYYY, h:mm:ss a');
         // create temperature record
         const tempRecord = {
+            phone,
             time,
             temp
         }
-        await client.db(process.env.DB).collection("User").updateOne({phone}, {$push: {temperatureRecords: tempRecord}})
+        await client.db(process.env.DB).collection("participant-data").insertOne(tempRecord)
     } catch (e) {
         next(e);
     }
@@ -67,7 +71,7 @@ router.post('/firstCallNoThermo', async (req, res, next) => {
         hasThermo = true;
     }
     try {
-        await insertSingleUser(client, process.env.DB, "User",
+        await insertSingleUser(client, process.env.DB, "no-thermo",
         {
                 "phone": phone,
                 "hasThermo": hasThermo
@@ -93,7 +97,7 @@ router.post('/firstCallAnswered', async (req, res, next) => {
         prefersCall = true;
     }
     try {
-        await insertSingleUser(client, process.env.DB, "User",
+        await insertSingleUser(client, process.env.DB, "participant",
         {
                 "phone": phone,
                 "hasThermo": hasThermo,
@@ -112,7 +116,7 @@ router.post('/firstCallNoAnswer', async (req, res, next) => {
     client = req.client;
     const phone = req.body.phone
     try {
-        await insertSingleUser(client, process.env.DB, "noResponse",
+        await insertSingleUser(client, process.env.DB, "no-response",
         {
                 "phone": phone
             }
@@ -127,7 +131,7 @@ router.post('/moreInfo', async (req, res, next) => {
     client = req.client;
     const phone = req.body.phone
     try {
-        await insertSingleUser(client, process.env.DB, "moreInfo",
+        await insertSingleUser(client, process.env.DB, "more-info",
         {
                 "phone": phone
             }
