@@ -39,7 +39,7 @@ Exposed to Twilio
 router.post('/updateTemp', async (req, res) => {
     client = req.client;
     const phone = req.body.phone;
-    const temp = req.body.temp;
+    let temp = parseInt(req.body.temp);
     if (temp > 900) {
         temp /= 10
     }
