@@ -57,7 +57,9 @@ router.post('/updateTemp', async (req, res) => {
         await client.db(process.env.DB).collection("participant-data").insertOne(tempRecord)
         res.status(200).send('Updated user record.');
     } catch (e) {
-        console.log(e)
+        if (e.message !== 'Invalid temperature!') {
+            console.log(e)
+        }
         res.status(500).send({'message': e});
     }
 });
