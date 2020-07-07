@@ -43,7 +43,7 @@ router.post('/updateTemp', async (req, res) => {
     let temp = parseFloat(req.body.temp);
     try {
         if (temp == NaN) {
-            throw 'Invalid temperature!';
+            throw new Error('Invalid temperature!');
         } else if (temp > 900) {
             temp /= 10;
         }
