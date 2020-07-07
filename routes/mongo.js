@@ -42,9 +42,7 @@ router.post('/updateTemp', async (req, res) => {
     const phone = req.body.phone;
     let temp = parseFloat(req.body.temp);
     try {
-        console.log(temp)
-        if (temp == NaN) {
-            console.log('Should throw error')
+        if (temp !== temp) {
             throw new Error('Invalid temperature!');
         } else if (temp > 900) {
             temp /= 10;
