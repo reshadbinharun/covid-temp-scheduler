@@ -45,7 +45,7 @@ router.post('/updateTemp', async (req, res) => {
         temp /= 10;
     }
     try {
-        assert(!isNan(temp))
+        assert(!temp.isNan())
         const time = moment().format('MMMM Do YYYY, h:mm:ss a');
         
         const tempRecord = {
