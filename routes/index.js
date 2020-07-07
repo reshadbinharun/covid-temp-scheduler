@@ -31,7 +31,7 @@ router.post('/ingest/csvFile', upload.single('file'), async (req, res, next) => 
         let phone = user.phone
         let id = user.id
         const result = await req.client.db(process.env.DB).collection(process.env.INGEST_COLLECTION)
-                                       .updateMany({phone}, {phone, id}, { upsert: true});
+                                       .updateOne({phone}, {phone, id}, { upsert: true});
       }
       res.send({data: results});
     });
