@@ -41,12 +41,11 @@ router.post('/updateTemp', async (req, res) => {
     client = req.client;
     const phone = req.body.phone;
     let temp = parseFloat(req.body.temp);
-    if (temp > 900) {
-        temp /= 10;
-    }
     try {
-        if (temp === NaN) {
+        if (temp == NaN) {
             throw 'Invalid temperature!';
+        } else if (temp > 900) {
+            temp /= 10;
         }
         const time = moment().format('MMMM Do YYYY, h:mm:ss a');
         
