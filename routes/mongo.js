@@ -1,18 +1,19 @@
 require('dotenv').config();
 var express = require('express');
 var router = express.Router();
+var assert = require('assert');
 const moment = require('moment');
 const { checkIn } = require('../cronHelpers');
 
 router.get('/users', async (req, res, next) => {
     client = req.client;
-    let users = []
+    let users = [];
     try {
         users = await client.db(process.env.DB).collection("User").find().toArray();
     } catch (e) {
         next(e);
     }
-    res.send(users)
+    res.send(users);
 });
 
 /*
@@ -39,24 +40,25 @@ Exposed to Twilio
 router.post('/updateTemp', async (req, res) => {
     client = req.client;
     const phone = req.body.phone;
-    let temp = parseInt(req.body.temp);
+    let temp = parseFloat(req.body.temp);
     if (temp > 900) {
-        temp /= 10
+        temp /= 10;
     }
     try {
+        assert(!isNan(temp))
         const time = moment().format('MMMM Do YYYY, h:mm:ss a');
-        // create temperature record
+        
         const tempRecord = {
             phone,
             time,
             temp
         }
         await client.db(process.env.DB).collection("participant-data").insertOne(tempRecord)
+        res.status(200).send('Updated user record.');
     } catch (e) {
         console.log(e)
-        next(e);
+        res.status(500).send({'message': e});
     }
-    res.status(200).send('Updated user record.');
 });
 
 /*
@@ -86,7 +88,8 @@ router.post('/firstCallNoThermo', async (req, res, next) => {
 
 router.post('/firstCallAnswered', async (req, res, next) => {
     client = req.client;
-    const phone = req.body.phone
+    let phone = req.body.phone
+    phone = '+1' + row.phone.replace(/[^\d+]|_|(\+1)/g, "")
     const thermoString = req.body.hasThermo
     var hasThermo = false;
     if (thermoString === "true") {
@@ -98,7 +101,7 @@ router.post('/firstCallAnswered', async (req, res, next) => {
         prefersCall = true;
     }
     try {
-        await insertSingleUser(client, process.env.DB, "participant",
+        await insertSingleUser(client, process.env.DB, "participants",
         {
                 "phone": phone,
                 "hasThermo": hasThermo,
@@ -141,22 +144,6 @@ router.post('/moreInfo', async (req, res, next) => {
         next(e)
     }
     res.send('User did not answer call')
-});
-
-// Mongo integration test function
-router.get('/inputOne', async (req, res, next) => {
-    client = req.client;
-    try {
-        await insertSingleUser(client, process.env.DB, process.env.INGEST_COLLECTION,
-            {
-                "phone_num": "1111111111",
-                "name": "Test_one"
-              }
-            );
-    } catch (e) {
-        next(e);
-    }
-    res.send('MongoDB Post Made')
 });
 
 router.post('/test/upsertUser', async (req, res, next) => {
