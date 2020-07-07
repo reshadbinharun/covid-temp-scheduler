@@ -32,7 +32,7 @@ router.post('/ingest/csvFile', upload.single('file'), async (req, res, next) => 
         let id = user.id
         const result = await req.client.db(process.env.DB).collection(process.env.INGEST_COLLECTION)
                                        .updateOne({'phone': phone}, 
-                                                  {$set {'phone': phone, 'id': id}}, 
+                                                  {$set: {'phone': phone, 'id': id}}, 
                                                   {upsert: true});
       }
       res.send({data: results});
