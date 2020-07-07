@@ -89,7 +89,7 @@ router.post('/firstCallNoThermo', async (req, res, next) => {
 router.post('/firstCallAnswered', async (req, res, next) => {
     client = req.client;
     let phone = req.body.phone
-    phone = '+1' + row.phone.replace(/[^\d+]|_|(\+1)/g, "")
+    phone = '+1' + phone.replace(/[^\d+]|_|(\+1)/g, "")
     const thermoString = req.body.hasThermo
     var hasThermo = false;
     if (thermoString === "true") {
