@@ -45,7 +45,9 @@ router.post('/updateTemp', async (req, res) => {
         temp /= 10;
     }
     try {
-        assert(temp !== NaN)
+        if (temp === NaN) {
+            throw 'Invalid temperature!';
+        }
         const time = moment().format('MMMM Do YYYY, h:mm:ss a');
         
         const tempRecord = {
