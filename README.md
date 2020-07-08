@@ -11,10 +11,24 @@ TODO:
 * Exporting data from a mongo database to a csv file
 * Symptom tracking (eg coughing, stomach aches)/ Generic how do you feel 1-5
 
-## Recommended Workflow:
-1. Use POSTMAN to upload a .csv file (containing a row for headers, including "phone" for a header) via `/ingest/csvFile` POST end-point
-2. Hit the `/twilio/firstCall` GET end-point 
-3. Use `/mongo/users` GET end-point to check what users have been registered onto the system. You may use this API to periodically track updates in temperatures
+## Usage Guide:
+1. Download POSTman (https://www.postman.com/)
+
+2. Use POSTman to send a POST request to SERVER_LINK/ingest/csvFile. Have the body contain one field, a file with key "file"
+The file needs to be a .csv file, with headers "id" and "phone number" or similar. 
+Your CSV should look like this:
+
+![CSV](https://i.imgur.com/zi8kig2.png)
+
+and your POST request like this: 
+
+![POSTman ](https://i.imgur.com/Dn0hnGC.png)
+
+3. Hit send. This should display text starting with "data", which means the entries were successfully loaded into the database.
+
+4. Hit the `/twilio/firstCall` GET end-point 
+
+5. Use `/mongo/users` GET end-point to check what users have been registered onto the system. You may use this API to periodically track updates in temperatures
 
 
 ## APIs exposed:

@@ -15,16 +15,26 @@ router.post('/ingest/csvFile', upload.single('file'), async (req, res, next) => 
     const filePath = req.file.path;
     let results = [];
     fs.createReadStream(filePath)
-    .pipe(csv.parse({ headers: true }))
+    .pipe(csv.parse({ headers: ['id', 'phone'], renameHeaders: true}))
     .on('error', error => console.error(error))
     .on('data', row => {
-      results.push(row)
+      if(row.id !== '' && row.phone !== '') {
+        row.phone = '+1' + row.phone.replace(/[^\d+]|_|(\+1)/g, "")
+        results.push(row)
+      }
     })
     .on('end', async rowCount => {
       console.log(`Parsed ${rowCount} rows`);
       // delete temporary file stored in tmp/csv
       fs.unlinkSync(filePath);
-      await req.client.db(process.env.DB).collection(process.env.INGEST_COLLECTION).insertMany(results);
+      for (let user of results) {
+        let phone = user.phone
+        let id = user.id
+        const result = await req.client.db(process.env.DB).collection(process.env.INGEST_COLLECTION)
+                                       .updateOne({'phone': phone}, 
+                                                  {$set: {'phone': phone, 'id': id}}, 
+                                                  {upsert: true});
+      }
       res.send({data: results});
     });
 });
