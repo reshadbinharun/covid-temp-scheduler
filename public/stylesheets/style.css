@@ -1,6 +1,45 @@
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font-family: "Trebuchet MS", Helvetica, sans-serif;
+  background-color: white;
+}
+header {
+  padding: 1em;
+  color: black;
+  background-color: #3E8EDE
+}
+main {
+  padding: 1em;
+  color: black;
+}
+
+label {
+  display: block;
+}
+
+input,
+label {
+  margin: .4rem 0;
+}
+
+input[type=submit] {
+  background-color: #3E8EDE;
+  font-family: "Trebuchet MS", Helvetica, sans-serif;
+  border: none;
+  border-radius: 1em;
+  color: white;
+  padding: .5em 1em;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+
+.parent {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+
+.ingest-form {
+  background-color: lightgrey;
+  padding: 1em;
 }
 
 a {

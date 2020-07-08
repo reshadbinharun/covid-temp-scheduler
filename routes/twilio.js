@@ -4,8 +4,8 @@ var router = express.Router();
 const accountSid = process.env.TWILIO_AC;
 const authToken = process.env.TWILIO_AUTH;
 const client = require('twilio')(accountSid, authToken);
-const moment = require('moment');
 var { checkIn } = require('../cronHelpers');
+var path = require('path');
 
 
 router.get('/firstCall', async (req, res) => {
@@ -25,7 +25,7 @@ router.get('/firstCall', async (req, res) => {
                 message: e
             });
         }
-        res.status(200).send("Successful call to twilio API")
+        res.sendFile(path.resolve('public/twilio/firstCall.html'))
     }));
 });
 

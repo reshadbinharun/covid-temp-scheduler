@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var path = require('path')
 
 const multer = require('multer');
 const csv = require('fast-csv');
@@ -8,7 +9,7 @@ const fs = require('fs');
 const upload = multer({ dest: 'tmp/csv/' });
 
 router.get('/', function(req, res, next) {
-  res.send("This is the index page!");
+  res.sendFile(path.resolve('/public/index.html'))
 });
 
 router.post('/ingest/csvFile', upload.single('file'), async (req, res, next) => {
@@ -41,7 +42,7 @@ router.post('/ingest/csvFile', upload.single('file'), async (req, res, next) => 
                                                   {$set: {'phone': phone, 'id': id}}, 
                                                   {upsert: true});
       }
-      res.send({'parsed entries': results});
+      res.sendFile(path.resolve('public/ingest/csvFile.html'))
     });
 });
 

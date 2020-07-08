@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Temperature Monitoring Dashboard</title>
+        <link rel="stylesheet" href="./stylesheets/style.css">
+    </head>
+    <body>
+        <div class="parent">
+            <Header>
+                <h1>Tufts Temperature Monitoring Dashboard</h1>
+            </Header>
+            <Main>
+                <h2>Controls:</h2>
+                <div class="ingest-form">
+                    <h3>Prime phone numbers:</h3>
+                    <form action='ingest/csvFile' method="POST" enctype="multipart/form-data" target="_self">
+                        <Label>Select a .csv file to load into the database</Label>
+                        <input type="file" id="file" name="file" accept=".csv" />
+                        <br/>
+                        <input type="submit" value="Upload File" />
+                    </form>
+                </div>
+                <div class="ingest-form">
+                    <h3>Initiate first call to primed numbers:</h3>
+                    <form action='twilio/firstCall' method="GET" target="_self">
+                        <Label>This button will use twilio to send a call to everyone currently in the database</Label>
+                        <input type="submit" value="Make Calls" />
+                    </form>
+                </div>
+            </Main>
+        </div>
+    </body>
+</html>
