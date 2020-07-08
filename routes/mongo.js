@@ -1,37 +1,8 @@
 require('dotenv').config();
 var express = require('express');
 var router = express.Router();
-var assert = require('assert');
 const moment = require('moment');
-const { checkIn } = require('../cronHelpers');
 
-router.get('/users', async (req, res, next) => {
-    client = req.client;
-    let users = [];
-    try {
-        users = await client.db(process.env.DB).collection("User").find().toArray();
-    } catch (e) {
-        next(e);
-    }
-    res.send(users);
-});
-
-/*
-ENDPOINTS TO TEST TWILIO INTEGRATION
-v v v
-*/
-router.get('/twilioTest', async (req, res, next) => {
-    await checkIn(req.client, 'nextCheckin', 'period');
-    res.send('Hit twilio endpoint');
-});
-
-router.get('/noReply', async (req, res, next) => {
-    res.send('No reply');
-});
-/*
-^ ^ ^
-ENDPOINTS TO TEST TWILIO INTEGRATION
-*/
 
 /*
 Exposed to Twilio
@@ -47,6 +18,10 @@ router.post('/updateTemp', async (req, res) => {
         } else if (temp > 900) {
             temp /= 10;
         }
+        if (temp < 80 || temp > 120) {
+            throw new Error('Invalid temperature!')
+        }
+
         const time = moment().format('MMMM Do YYYY, h:mm:ss a');
         
         const tempRecord = {
@@ -77,6 +52,7 @@ router.post('/firstCallNoThermo', async (req, res, next) => {
         hasThermo = true;
     }
     try {
+        let removeNum = await dbclient.db(process.env.DB).collection(process.env.INGEST_COLLECTION).remove({phone: phone})
         await insertSingleUser(client, process.env.DB, "no-thermo",
         {
                 "phone": phone,
@@ -104,6 +80,7 @@ router.post('/firstCallAnswered', async (req, res, next) => {
         prefersCall = true;
     }
     try {
+        let removeNum = await dbclient.db(process.env.DB).collection(process.env.INGEST_COLLECTION).remove({phone: phone})
         await insertSingleUser(client, process.env.DB, "participants",
         {
                 "phone": phone,
@@ -123,6 +100,7 @@ router.post('/firstCallNoAnswer', async (req, res, next) => {
     client = req.client;
     const phone = req.body.phone
     try {
+        let removeNum = await dbclient.db(process.env.DB).collection(process.env.INGEST_COLLECTION).remove({phone: phone})
         await insertSingleUser(client, process.env.DB, "no-response",
         {
                 "phone": phone
@@ -138,6 +116,7 @@ router.post('/moreInfo', async (req, res, next) => {
     client = req.client;
     const phone = req.body.phone
     try {
+        let removeNum = await dbclient.db(process.env.DB).collection(process.env.INGEST_COLLECTION).remove({phone: phone})
         await insertSingleUser(client, process.env.DB, "more-info",
         {
                 "phone": phone
@@ -149,20 +128,7 @@ router.post('/moreInfo', async (req, res, next) => {
     res.send('User did not answer call')
 });
 
-router.post('/test/upsertUser', async (req, res, next) => {
-    try {
-        const phone = req.body.phone;
-        const hasThermo = req.body.hasThermo;
-        const prefersCall = req.body.prefersCall;
-        const client = req.client;
-        const result = await client.db(process.env.DB).collection(process.env.USER_COLLECTION).update({phone}, {phone, hasThermo, prefersCall}, { upsert: true});
-        res.send(result);
-    } catch (e) {
-        next(e);
-    }
-});
-
-//Hardcoded Demo Function: Inserts one user into the Mongo Database
+// Helper: Inserts one user into the Mongo Database
 async function insertSingleUser(client, database, collection, post) {
     try{
         const result = await client.db(database).collection(collection).insertOne(post);
