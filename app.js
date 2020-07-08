@@ -77,7 +77,7 @@ async function main() {
       next();
     }, twilioRouter);
 
-    app.use('/recording/', (req, res) => {
+    app.use('/recording.m4a/', (req, res) => {
       res.sendFile('./sound_files/blkstomp.m4a', {root: __dirname})
     })
 
