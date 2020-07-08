@@ -41,7 +41,7 @@ router.post('/ingest/csvFile', upload.single('file'), async (req, res, next) => 
                                                   {$set: {'phone': phone, 'id': id}}, 
                                                   {upsert: true});
       }
-      res.send({data: results});
+      res.send({'parsed entries': results});
     });
 });
 

@@ -20,12 +20,12 @@ router.get('/firstCall', async (req, res) => {
                 .then(function(execution) { 
                     console.log("Successfully executed flow!", execution.sid);
                 });
-            res.send("Successful call to twilio API")
         } catch (e) {
             res.json({
                 message: e
             });
         }
+        res.send("Successful call to twilio API")
     }));
 });
 
