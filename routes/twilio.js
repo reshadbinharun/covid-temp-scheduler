@@ -21,7 +21,7 @@ router.get('/firstCall', async (req, res) => {
                     console.log("Successfully executed flow!", execution.sid);
                 });
         } catch (e) {
-            res.json({
+            res.status(500).send({
                 message: e
             });
         }
