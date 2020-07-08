@@ -77,8 +77,8 @@ async function main() {
       next();
     }, twilioRouter);
 
-    app.use('/recording.m4a/', (req, res) => {
-      res.sendFile('./sound_files/blkstomp.m4a', {root: __dirname})
+    app.use('/recording.mp3/', (req, res) => {
+      res.sendFile('./sound_files/blkstomp.mp3', {root: __dirname})
     })
 
     // catch 404 and forward to error handler
