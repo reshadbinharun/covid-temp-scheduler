@@ -25,7 +25,7 @@ router.get('/firstCall', async (req, res) => {
                 message: e
             });
         }
-        res.send("Successful call to twilio API")
+        res.status(200).send("Successful call to twilio API")
     }));
 });
 
