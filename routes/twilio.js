@@ -20,7 +20,6 @@ router.get('/firstCall', async (req, res) => {
                 .then(function(execution) { 
                     console.log("Successfully executed flow!", execution.sid);
                 });
-                let removeNum = await dbclient.db(process.env.DB).collection(process.env.INGEST_COLLECTION).remove({phone: phone})
             res.send("Successful call to twilio API")
         } catch (e) {
             res.json({

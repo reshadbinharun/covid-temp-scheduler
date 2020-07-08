@@ -30,6 +30,12 @@ router.post('/ingest/csvFile', upload.single('file'), async (req, res, next) => 
       for (let user of results) {
         let phone = user.phone
         let id = user.id
+        let duplicate = await req.client.db(process.env.DB).collection(process.env.INGEST_COLLECTION)
+                                .findOne({'phone': phone})
+        if (duplicate) {
+          req.client.db(process.env.DB).collection(process.env.DUPLICATE_COLLECTION)
+            .insertOne(duplicate)
+        }
         const result = await req.client.db(process.env.DB).collection(process.env.INGEST_COLLECTION)
                                        .updateOne({'phone': phone}, 
                                                   {$set: {'phone': phone, 'id': id}}, 
